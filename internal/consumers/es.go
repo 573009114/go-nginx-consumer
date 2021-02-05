@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	elastic "gopkg.in/olivere/elastic.v6"
@@ -56,11 +57,13 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 		return
 	}
 
-	fmt.Println(msg.Source)
+	path := msg.Source
+	index := strings.LastIndex(path, "/")
+	fmt.Println(index)
 
 	//创建索引以及写入数据
 	_, err = c.Index().
-		Index(msg.Prospector.Type).
+		Index(index).
 		Type(topic).
 		BodyJson(msg.Message).
 		Do(context.Background())
