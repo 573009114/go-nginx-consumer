@@ -3,6 +3,7 @@ package consumers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"time"
 
@@ -76,6 +77,7 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 		Do(context.Background())
 
 	if err != nil {
+		fmt.Println(msg.Source)
 		log.Printf("error: %s", err)
 	} else {
 		log.Printf("%s insert success!", msg.Index)

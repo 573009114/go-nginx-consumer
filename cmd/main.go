@@ -44,6 +44,7 @@ func main() {
 	runtime.GOMAXPROCS(1)
 
 	err := consumers.KafkaConsumer(logCfg.kafkaAddr, logCfg.Topic, logCfg.ESAddr)
+
 	if err != nil {
 		log.Fatal("consumers error", err)
 	}
