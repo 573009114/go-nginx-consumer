@@ -57,9 +57,12 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 		return
 	}
 
+	msg.Source = "/data/logs/nginx/access.log"
 	filesname := filepath.Base(msg.Source)
+	Timestamp := "2021-02-05T09:22:16.724Z"
 	fmt.Println(filesname)
-	fmt.Println(msg.Timestamp.Local())
+	_, err = time.ParseInLocation("2006-01-02 15:04", Timestamp, time.Local)
+	fmt.Println(err)
 
 	//创建索引以及写入数据
 	_, err = c.Index().
