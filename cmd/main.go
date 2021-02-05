@@ -30,7 +30,7 @@ func GetEnv(key string, defaultVale string) string {
 func loadEnv() {
 	kafkaAddr := GetEnv("KAFKA_ENDPOINT", "10.91.129.250:9092")
 	esAddr := GetEnv("ES_ENDPOINT", "HTTP://10.91.129.250:9200")
-	topic := GetEnv("KAFKA_TOPIC", "default")
+	topic := GetEnv("KAFKA_TOPIC", "haowen")
 
 	logCfg = &Cfg{
 		kafkaAddr: kafkaAddr,
