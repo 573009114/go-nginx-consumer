@@ -1,7 +1,7 @@
 package consumers
 
 import (
-	"fmt"
+	"log"
 	"strings"
 	"sync"
 
@@ -46,7 +46,7 @@ func KafkaConsumer(addr string, topic string, ES string) (err error) {
 				//写入es
 				err := Elastichandle(ES, topic, data)
 				if err != nil {
-					fmt.Println("ERROR", err)
+					log.Printf("%s", err)
 				}
 
 			}
