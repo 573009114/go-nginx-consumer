@@ -9,40 +9,26 @@ import (
 	elastic "gopkg.in/olivere/elastic.v6"
 )
 
-//NgxMessage 结构体定义
+//NgxMessage 定义消费日志结构体
 type NgxMessage struct {
-	Index   string      `json:"_index"`
-	Type    string      `json:"_type"`
-	ID      string      `json:"_id"`
-	Version int         `json:"_version"`
-	Score   interface{} `json:"_score"`
-	Source  struct {
-		Version string `json:"@version"`
-		// Timestamps           time.Time `json:"@timestamp"`
-		Type                 string  `json:"type"`
-		Path                 string  `json:"path"`
-		Host                 string  `json:"host"`
-		RemoteAddr           string  `json:"remote_addr"`
-		RemoteUser           string  `json:"remote_user"`
-		Timestamp            string  `json:"timestamp"`
-		Request              string  `json:"request"`
-		Status               string  `json:"status"`
-		HTTPReferer          string  `json:"http_referer"`
-		HTTPUserAgent        string  `json:"http_user_agent"`
-		HTTPXForwardedFor    string  `json:"http_x_forwarded_for"`
-		RemoteHost           string  `json:"remote_host"`
-		UpstreamAddr         string  `json:"upstream_addr"`
-		URI                  string  `json:"uri"`
-		XKSCACCOUNTID        string  `json:"X-KSC-ACCOUNT-ID"`
-		XKSCREQUESTID        string  `json:"X-KSC-REQUEST-ID"`
-		BodyBytesSent        int     `json:"body_bytes_sent"`
-		RequestTime          float64 `json:"request_time"`
-		UpstreamResponseTime float64 `json:"upstream_response_time"`
-	} `json:"_source"`
-	Fields struct {
-		Timestamp []time.Time `json:"@timestamp"`
-	} `json:"fields"`
-	Sort []int64 `json:"sort"`
+	Timestamp time.Time `json:"@timestamp"`
+	Metadata  struct {
+		Beat    string `json:"beat"`
+		Type    string `json:"type"`
+		Version string `json:"version"`
+		Topic   string `json:"topic"`
+	} `json:"@metadata"`
+	Beat struct {
+		Name     string `json:"name"`
+		Hostname string `json:"hostname"`
+		Version  string `json:"version"`
+	} `json:"beat"`
+	Offset     int    `json:"offset"`
+	Message    string `json:"message"`
+	Source     string `json:"source"`
+	Prospector struct {
+		Type string `json:"type"`
+	} `json:"prospector"`
 }
 
 var (
@@ -64,21 +50,22 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 
 	msg := &NgxMessage{}
 	err = json.Unmarshal(data, &msg)
+
 	if err != nil {
 		return
 	}
 
 	//创建索引以及写入数据
 	_, err = c.Index().
-		Index(msg.Index).
+		Index(topic).
 		Type(topic).
-		BodyJson(msg.Source).
+		BodyJson(msg.Message).
 		Do(context.Background())
 
 	if err != nil {
 		log.Printf("error: %s", err)
 	} else {
-		log.Printf("%s insert success!", msg.Index)
+		log.Printf("%s insert success!", msg.Message)
 	}
 	return
 }
