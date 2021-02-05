@@ -57,7 +57,7 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 
 	//创建索引以及写入数据
 	_, err = c.Index().
-		Index(topic).
+		Index(msg.Prospector.Type).
 		Type(topic).
 		BodyJson(msg.Message).
 		Do(context.Background())
