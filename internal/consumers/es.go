@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"strings"
+	"path/filepath"
 	"time"
 
 	elastic "gopkg.in/olivere/elastic.v6"
@@ -57,9 +57,7 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 		return
 	}
 
-	path := msg.Source
-	index := strings.LastIndex(path, "/")
-	fmt.Println(index)
+	fmt.Println(filepath.Base(msg.Source))
 
 	//创建索引以及写入数据
 	_, err = c.Index().
