@@ -59,7 +59,7 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 
 	filesname := filepath.Base(msg.Source)
 	fmt.Println(filesname)
-	fmt.Println(msg.Timestamp)
+	fmt.Println(msg.Timestamp.Local())
 
 	//创建索引以及写入数据
 	_, err = c.Index().
