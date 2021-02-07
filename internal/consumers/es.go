@@ -39,6 +39,7 @@ type NgxMessage struct {
 //LogBody struct
 type LogBody struct {
 	Version              string `json:"@version"`
+	Timestamp            string `json:"timestamp"`
 	Type                 string `json:"type"`
 	Path                 string `json:"path"`
 	Host                 string `json:"host"`
