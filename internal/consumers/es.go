@@ -56,7 +56,6 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 		return
 	}
 
-	msg.Source = "/data/logs/nginx/access.log"
 	filesname := filepath.Base(msg.Source)
 
 	// fmt.Println(reflect.TypeOf(msg.Timestamp))
