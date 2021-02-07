@@ -62,7 +62,7 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 	c, err := elastic.NewClient(
 		elastic.SetURL(addr),
 		elastic.SetSniff(false),
-		elastic.SetHealthcheckInterval(10*time.Second),
+		elastic.SetHealthcheckInterval(60*time.Second),
 		elastic.SetGzip(true),
 	)
 	if err != nil {
