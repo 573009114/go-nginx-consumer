@@ -22,6 +22,7 @@ type NgxMessage struct {
 	} `json:"@metadata"`
 	Message string `json:"message"`
 	Msg     struct {
+		// Timestamp            time.Time `json:"@timestamp"`
 		RemoteAddr           string `json:"remote_addr"`
 		RemoteUser           string `json:"remote_user"`
 		Timestamp            string `json:"timestamp"`
@@ -38,9 +39,6 @@ type NgxMessage struct {
 		URI                  string `json:"uri"`
 		XKSCACCOUNTID        string `json:"X-KSC-ACCOUNT-ID"`
 		XKSCREQUESTID        string `json:"X-KSC-REQUEST-ID"`
-		Fields               struct {
-			Timestamp string `json:"timestamp"`
-		} `json:"fields"`
 	} `json:"msg"`
 	Source     string `json:"source"`
 	Offset     int    `json:"offset"`
@@ -97,12 +95,12 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 	// newMsg, _ := json.Marshal(msg)
 	// fmt.Println(newMsg)
 
-	fmt.Println(msg.Msg)
+	fmt.Println(msg)
 	//创建索引以及写入数据
 	_, err = c.Index().
 		Index(indexname).
 		Type(topic).
-		BodyJson(msg.Msg).
+		BodyJson(msg).
 		Do(context.Background())
 
 	if err != nil {
