@@ -33,6 +33,21 @@ type NgxMessage struct {
 	Prospector struct {
 		Type string `json:"type"`
 	} `json:"prospector"`
+	RemoteAddr           string `json:"remote_addr"`
+	RemoteUser           string `json:"remote_user"`
+	Request              string `json:"request"`
+	Status               string `json:"status"`
+	BodyBytesSent        string `json:"body_bytes_sent"`
+	HTTPReferer          string `json:"http_referer"`
+	HTTPUserAgent        string `json:"http_user_agent"`
+	HTTPXForwardedFor    string `json:"http_x_forwarded_for"`
+	RequestTime          string `json:"request_time"`
+	RemoteHost           string `json:"remote_host"`
+	UpstreamResponseTime string `json:"upstream_response_time"`
+	UpstreamAddr         string `json:"upstream_addr"`
+	URI                  string `json:"uri"`
+	XKSCACCOUNTID        string `json:"X-KSC-ACCOUNT-ID"`
+	XKSCREQUESTID        string `json:"X-KSC-REQUEST-ID"`
 }
 
 var (
