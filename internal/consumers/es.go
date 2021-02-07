@@ -20,6 +20,30 @@ type NgxMessage struct {
 		Version string `json:"version"`
 		Topic   string `json:"topic"`
 	} `json:"@metadata"`
+	Message string `json:"message"`
+	Msg     struct {
+		RemoteAddr           string `json:"remote_addr"`
+		RemoteUser           string `json:"remote_user"`
+		Timestamp            string `json:"timestamp"`
+		Request              string `json:"request"`
+		Status               string `json:"status"`
+		BodyBytesSent        string `json:"body_bytes_sent"`
+		HTTPReferer          string `json:"http_referer"`
+		HTTPUserAgent        string `json:"http_user_agent"`
+		HTTPXForwardedFor    string `json:"http_x_forwarded_for"`
+		RequestTime          string `json:"request_time"`
+		RemoteHost           string `json:"remote_host"`
+		UpstreamResponseTime string `json:"upstream_response_time"`
+		UpstreamAddr         string `json:"upstream_addr"`
+		URI                  string `json:"uri"`
+		XKSCACCOUNTID        string `json:"X-KSC-ACCOUNT-ID"`
+		XKSCREQUESTID        string `json:"X-KSC-REQUEST-ID"`
+	} `json:"msg"`
+	Source     string `json:"source"`
+	Offset     int    `json:"offset"`
+	Prospector struct {
+		Type string `json:"type"`
+	} `json:"prospector"`
 	Fields struct {
 		LogTopics string `json:"log_topics"`
 	} `json:"fields"`
@@ -28,40 +52,6 @@ type NgxMessage struct {
 		Hostname string `json:"hostname"`
 		Version  string `json:"version"`
 	} `json:"beat"`
-	Source     string `json:"source"`
-	Offset     int    `json:"offset"`
-	Message    string `json:"message"`
-	Prospector struct {
-		Type string `json:"type"`
-	} `json:"prospector"`
-}
-
-//LogBody struct
-type LogBody struct {
-	Version              string `json:"@version"`
-	Timestamp            string `json:"timestamp"`
-	Type                 string `json:"type"`
-	Path                 string `json:"path"`
-	Host                 string `json:"host"`
-	RemoteAddr           string `json:"remote_addr"`
-	RemoteUser           string `json:"remote_user"`
-	Request              string `json:"request"`
-	Status               string `json:"status"`
-	HTTPReferer          string `json:"http_referer"`
-	HTTPUserAgent        string `json:"http_user_agent"`
-	HTTPXForwardedFor    string `json:"http_x_forwarded_for"`
-	RemoteHost           string `json:"remote_host"`
-	UpstreamAddr         string `json:"upstream_addr"`
-	URI                  string `json:"uri"`
-	XKSCACCOUNTID        string `json:"X-KSC-ACCOUNT-ID"`
-	XKSCREQUESTID        string `json:"X-KSC-REQUEST-ID"`
-	BodyBytesSent        string `json:"body_bytes_sent"`
-	RequestTime          string `json:"request_time"`
-	UpstreamResponseTime string `json:"upstream_response_time"`
-	Fields               struct {
-		Timestamp []time.Time `json:"@timestamp"`
-	} `json:"fields"`
-	Sort []int64 `json:"sort"`
 }
 
 var (
@@ -83,18 +73,18 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 
 	msg := &NgxMessage{}
 	err = json.Unmarshal(data, &msg)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal([]byte(msg.Message), &msg.Msg)
 
 	if err != nil {
 		return
 	}
 
-	p := &LogBody{}
-	err = json.Unmarshal([]byte(msg.Message), &p)
-	if err != nil {
-		return
-	}
-	fmt.Println(p)
-
+	// bf := json.NewEncoder(msg)
+	// bf.SetEscapeHTML(false)
+	// fmt.Println(bf)
 	filesname := filepath.Base(msg.Source)
 	// fmt.Println(reflect.TypeOf(msg.Timestamp))
 
@@ -106,17 +96,18 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 	// newMsg, _ := json.Marshal(msg)
 	// fmt.Println(newMsg)
 
+	fmt.Println(msg.Msg)
 	//创建索引以及写入数据
 	_, err = c.Index().
 		Index(indexname).
 		Type(topic).
-		BodyJson(p).
+		BodyJson(msg.Msg).
 		Do(context.Background())
 
 	if err != nil {
 		log.Printf("error: %s", err)
 	} else {
-		log.Printf("%s insert success!", msg.Message)
+		log.Printf("insert success!")
 	}
 	return
 }
