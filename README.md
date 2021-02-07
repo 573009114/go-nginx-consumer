@@ -19,9 +19,7 @@ log_format  main   '{'
     ' "remote_host": "$host",'
     ' "upstream_response_time": "$upstream_response_time",'
     ' "upstream_addr": "$upstream_addr",'
-    ' "uri": "$uri",'
-    ' "X-KSC-ACCOUNT-ID": "$http_x_ksc_account_id",'
-    ' "X-KSC-REQUEST-ID": "$http_x_ksc_request_id"'
+    ' "uri": "$uri"'
 '}';
 
 ```
