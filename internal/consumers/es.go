@@ -73,12 +73,14 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 	//序列化kafka接收的数据
 	err = json.Unmarshal(data, &msg)
 	if err != nil {
+		log.Print(err)
 		return
 	}
 	//序列化message字段的信息
 	err = json.Unmarshal([]byte(msg.Message), &msg.Msg)
 
 	if err != nil {
+		log.Print(err)
 		return
 	}
 
