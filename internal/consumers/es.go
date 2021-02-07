@@ -22,9 +22,10 @@ type NgxMessage struct {
 	} `json:"@metadata"`
 	Message string `json:"message"`
 	Msg     struct {
-		RemoteAddr           string `json:"remote_addr"`
-		RemoteUser           string `json:"remote_user"`
-		Timestamp            string `json:"timestamp"`
+		Timestamp  time.Time `json:"@timestamp"`
+		RemoteAddr string    `json:"remote_addr"`
+		RemoteUser string    `json:"remote_user"`
+		// Timestamp            string `json:"timestamp"`
 		Request              string `json:"request"`
 		Status               string `json:"status"`
 		BodyBytesSent        string `json:"body_bytes_sent"`
@@ -38,6 +39,9 @@ type NgxMessage struct {
 		URI                  string `json:"uri"`
 		XKSCACCOUNTID        string `json:"X-KSC-ACCOUNT-ID"`
 		XKSCREQUESTID        string `json:"X-KSC-REQUEST-ID"`
+		Fields               struct {
+			Timestamp []time.Time `json:"@timestamp"`
+		} `json:"fields"`
 	} `json:"msg"`
 	Source     string `json:"source"`
 	Offset     int    `json:"offset"`
