@@ -3,6 +3,7 @@ package consumers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"path/filepath"
 	"time"
@@ -37,29 +38,26 @@ type NgxMessage struct {
 
 //LogBody struct
 type LogBody struct {
-	Source struct {
-		Version              string    `json:"@version"`
-		Timestamp            time.Time `json:"@timestamp"`
-		Type                 string    `json:"type"`
-		Path                 string    `json:"path"`
-		Host                 string    `json:"host"`
-		RemoteAddr           string    `json:"remote_addr"`
-		RemoteUser           string    `json:"remote_user"`
-		Request              string    `json:"request"`
-		Status               string    `json:"status"`
-		HTTPReferer          string    `json:"http_referer"`
-		HTTPUserAgent        string    `json:"http_user_agent"`
-		HTTPXForwardedFor    string    `json:"http_x_forwarded_for"`
-		RemoteHost           string    `json:"remote_host"`
-		UpstreamAddr         string    `json:"upstream_addr"`
-		URI                  string    `json:"uri"`
-		XKSCACCOUNTID        string    `json:"X-KSC-ACCOUNT-ID"`
-		XKSCREQUESTID        string    `json:"X-KSC-REQUEST-ID"`
-		BodyBytesSent        int       `json:"body_bytes_sent"`
-		RequestTime          float64   `json:"request_time"`
-		UpstreamResponseTime float64   `json:"upstream_response_time"`
-	} `json:"_source"`
-	Fields struct {
+	Version              string `json:"@version"`
+	Type                 string `json:"type"`
+	Path                 string `json:"path"`
+	Host                 string `json:"host"`
+	RemoteAddr           string `json:"remote_addr"`
+	RemoteUser           string `json:"remote_user"`
+	Request              string `json:"request"`
+	Status               string `json:"status"`
+	HTTPReferer          string `json:"http_referer"`
+	HTTPUserAgent        string `json:"http_user_agent"`
+	HTTPXForwardedFor    string `json:"http_x_forwarded_for"`
+	RemoteHost           string `json:"remote_host"`
+	UpstreamAddr         string `json:"upstream_addr"`
+	URI                  string `json:"uri"`
+	XKSCACCOUNTID        string `json:"X-KSC-ACCOUNT-ID"`
+	XKSCREQUESTID        string `json:"X-KSC-REQUEST-ID"`
+	BodyBytesSent        string `json:"body_bytes_sent"`
+	RequestTime          string `json:"request_time"`
+	UpstreamResponseTime string `json:"upstream_response_time"`
+	Fields               struct {
 		Timestamp []time.Time `json:"@timestamp"`
 	} `json:"fields"`
 	Sort []int64 `json:"sort"`
@@ -94,9 +92,9 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 	if err != nil {
 		return
 	}
+	fmt.Println(p)
 
 	filesname := filepath.Base(msg.Source)
-
 	// fmt.Println(reflect.TypeOf(msg.Timestamp))
 
 	timers := msg.Timestamp.Local()
@@ -111,7 +109,7 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 	_, err = c.Index().
 		Index(indexname).
 		Type(topic).
-		BodyJson(p.Source).
+		BodyJson(p).
 		Do(context.Background())
 
 	if err != nil {
