@@ -3,7 +3,6 @@ package consumers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"path/filepath"
 	"time"
@@ -67,17 +66,17 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 	timers := msg.Timestamp.Local()
 	t := timers.Format("2006-01-02")
 	// to := msg.Timestamp
-	fmt.Println(timers)
 
 	indexname := filesname + "-" + t
 
-	newMsg, _ := json.Marshal(msg)
+	// newMsg, _ := json.Marshal(msg)
+	// fmt.Println(newMsg)
 
 	//创建索引以及写入数据
 	_, err = c.Index().
 		Index(indexname).
 		Type(topic).
-		BodyJson(string(newMsg)).
+		BodyJson(msg).
 		Do(context.Background())
 
 	if err != nil {
