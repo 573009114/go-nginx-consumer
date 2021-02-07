@@ -22,7 +22,6 @@ type NgxMessage struct {
 	} `json:"@metadata"`
 	Message string `json:"message"`
 	Msg     struct {
-		// Timestamp            time.Time `json:"@timestamp"`
 		RemoteAddr           string `json:"remote_addr"`
 		RemoteUser           string `json:"remote_user"`
 		Timestamp            string `json:"timestamp"`
@@ -71,29 +70,27 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 	}
 
 	msg := &NgxMessage{}
+	//序列化kafka接收的数据
 	err = json.Unmarshal(data, &msg)
 	if err != nil {
 		return
 	}
+	//序列化message字段的信息
 	err = json.Unmarshal([]byte(msg.Message), &msg.Msg)
 
 	if err != nil {
 		return
 	}
 
-	// bf := json.NewEncoder(msg)
-	// bf.SetEscapeHTML(false)
-	// fmt.Println(bf)
+	//获取日志文件名
 	filesname := filepath.Base(msg.Source)
-	// fmt.Println(reflect.TypeOf(msg.Timestamp))
 
+	//转换时间为CST时间
 	timers := msg.Timestamp.Local()
 	t := timers.Format("2006-01-02")
 
+	//拼接索引
 	indexname := filesname + "-" + t
-
-	// newMsg, _ := json.Marshal(msg)
-	// fmt.Println(newMsg)
 
 	fmt.Println(msg)
 	//创建索引以及写入数据
