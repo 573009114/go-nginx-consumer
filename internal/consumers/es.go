@@ -66,16 +66,18 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 
 	timers := msg.Timestamp.Local()
 	t := timers.Format("2006-01-02")
-	// timestamp := timers.Format("2006-01-02T15:04:05.000Z")
-	// timestamp := "2021-02-07T02:54:23.000Z"
+	// to := msg.Timestamp
+	fmt.Println(timers)
+
 	indexname := filesname + "-" + t
 
-	fmt.Println(msg)
+	newMsg, _ := json.Marshal(msg)
+
 	//创建索引以及写入数据
 	_, err = c.Index().
 		Index(indexname).
 		Type(topic).
-		BodyJson(msg.Message).
+		BodyJson(string(newMsg)).
 		Do(context.Background())
 
 	if err != nil {
