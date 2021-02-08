@@ -1,7 +1,6 @@
 package consumers
 
 import (
-	"fmt"
 	"log"
 	"strings"
 	"sync"
@@ -30,21 +29,20 @@ func KafkaConsumer(addr string, topic string, ES string) (err error) {
 		wg sync.WaitGroup
 	)
 
+	wg.Add(1)
 	// 遍历所有分区
 	for partition := range partitionList {
+		defer wg.Done()
 		//消费者 消费 对应主题的 具体 分区 指定 主题 分区 offset  return 对应分区的对象
 		p, err := c.ConsumePartition(topic, int32(partition), sarama.OffsetNewest)
 		if err != nil {
 			logs.Error("循环获取消费分区错误 %d：%s", p, err)
 		}
-		defer p.AsyncClose()
-		//进入协程
 
-		wg.Add(1)
+		defer p.AsyncClose()
 		go func(sarama.PartitionConsumer) {
 			for msg := range p.Messages() {
 				data := msg.Value
-				fmt.Println(string(data))
 				//写入es
 				err := Elastichandle(ES, topic, data)
 				if err != nil {
@@ -52,10 +50,10 @@ func KafkaConsumer(addr string, topic string, ES string) (err error) {
 					continue
 				}
 			}
-			wg.Done()
+
 		}(p)
-		wg.Wait()
 	}
+	wg.Wait()
 	c.Close()
 	return nil
 }

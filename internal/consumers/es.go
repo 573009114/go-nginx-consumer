@@ -3,7 +3,6 @@ package consumers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"path/filepath"
 	"time"
@@ -74,7 +73,7 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 	//序列化kafka接收的数据
 	err = json.Unmarshal(data, &msg)
 	if err != nil {
-		log.Print("10001 非标准格式，无法序列化 ", err)
+		log.Print("10001 非标准格式，无法序列化 ")
 		return
 	}
 
@@ -84,7 +83,7 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 	err = json.Unmarshal([]byte(msg.Message), &msg.Msg)
 
 	if err != nil {
-		log.Print("10002 非标准格式，无法序列化 ", err)
+		log.Print("10002 非标准格式，无法序列化 ")
 	}
 
 	//获取日志文件名
@@ -97,7 +96,6 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 	//拼接索引
 	indexname := filesname + "-" + t
 
-	fmt.Println(msg)
 	//创建索引以及写入数据
 	_, err = c.Index().
 		Index(indexname).
