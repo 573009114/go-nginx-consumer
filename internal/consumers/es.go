@@ -22,22 +22,22 @@ type NgxMessage struct {
 	} `json:"@metadata"`
 	Message string `json:"message"`
 	Msg     struct {
-		RemoteAddr           string `json:"remote_addr"`
-		RemoteUser           string `json:"remote_user"`
-		Timestamp            string `json:"timestamp"`
-		Request              string `json:"request"`
-		Status               string `json:"status"`
-		BodyBytesSent        string `json:"body_bytes_sent"`
-		HTTPReferer          string `json:"http_referer"`
-		HTTPUserAgent        string `json:"http_user_agent"`
-		HTTPXForwardedFor    string `json:"http_x_forwarded_for"`
-		RequestTime          string `json:"request_time"`
-		RemoteHost           string `json:"remote_host"`
-		UpstreamResponseTime string `json:"upstream_response_time"`
-		UpstreamAddr         string `json:"upstream_addr"`
-		URI                  string `json:"uri"`
-		XKSCACCOUNTID        string `json:"X-KSC-ACCOUNT-ID"`
-		XKSCREQUESTID        string `json:"X-KSC-REQUEST-ID"`
+		RemoteAddr           string `json:"remote_addr,omitempty"`
+		RemoteUser           string `json:"remote_user,omitempty"`
+		Timestamp            string `json:"timestamp,omitempty"`
+		Request              string `json:"request,omitempty"`
+		Status               string `json:"status,omitempty"`
+		BodyBytesSent        string `json:"body_bytes_sent,omitempty"`
+		HTTPReferer          string `json:"http_referer,omitempty"`
+		HTTPUserAgent        string `json:"http_user_agent,omitempty"`
+		HTTPXForwardedFor    string `json:"http_x_forwarded_for,omitempty"`
+		RequestTime          string `json:"request_time,omitempty"`
+		RemoteHost           string `json:"remote_host,omitempty"`
+		UpstreamResponseTime string `json:"upstream_response_time,omitempty"`
+		UpstreamAddr         string `json:"upstream_addr,omitempty"`
+		URI                  string `json:"uri,omitempty"`
+		XKSCACCOUNTID        string `json:"X-KSC-ACCOUNT-ID,omitempty"`
+		XKSCREQUESTID        string `json:"X-KSC-REQUEST-ID,omitempty"`
 	} `json:"msg"`
 	Source     string `json:"source"`
 	Offset     int    `json:"offset"`
@@ -70,17 +70,19 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 	}
 
 	msg := &NgxMessage{}
-	//序列化kafka接收的数据
-	err = json.Unmarshal(data, &msg)
-	if err != nil {
-		log.Print(err)
-		return
-	}
 	//序列化message字段的信息
+	// fmt.Println(reflect.TypeOf(msg.Message))
+
 	err = json.Unmarshal([]byte(msg.Message), &msg.Msg)
 
 	if err != nil {
-		log.Print(err)
+		log.Print("ES录入数据序列化错误,数据将原样输入 ", err)
+	}
+
+	//序列化kafka接收的数据
+	err = json.Unmarshal(data, &msg)
+	if err != nil {
+		log.Print("源数据序列化错误", err)
 		return
 	}
 
