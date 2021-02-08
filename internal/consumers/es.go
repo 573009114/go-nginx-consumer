@@ -74,7 +74,7 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 	//序列化kafka接收的数据
 	err = json.Unmarshal(data, &msg)
 	if err != nil {
-		log.Print("10001 非标准格式，无法序列化", err)
+		log.Print("10001 非标准格式，无法序列化 ", err)
 		return
 	}
 
@@ -84,7 +84,7 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 	err = json.Unmarshal([]byte(msg.Message), &msg.Msg)
 
 	if err != nil {
-		log.Print("10002 非标准格式，无法序列化", err)
+		log.Print("10002 非标准格式，无法序列化 ", err)
 	}
 
 	//获取日志文件名
