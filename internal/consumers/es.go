@@ -70,20 +70,21 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 	}
 
 	msg := &NgxMessage{}
+
+	//序列化kafka接收的数据
+	err = json.Unmarshal(data, &msg)
+	if err != nil {
+		log.Print("10001 非标准格式，无法序列化", err)
+		return
+	}
+
 	//序列化message字段的信息
 	// fmt.Println(reflect.TypeOf(msg.Message))
 
 	err = json.Unmarshal([]byte(msg.Message), &msg.Msg)
 
 	if err != nil {
-		log.Print("ES录入数据序列化错误,数据将原样输入 ", err)
-	}
-
-	//序列化kafka接收的数据
-	err = json.Unmarshal(data, &msg)
-	if err != nil {
-		log.Print("源数据序列化错误", err)
-		return
+		log.Print("10002 非标准格式，无法序列化", err)
 	}
 
 	//获取日志文件名
@@ -105,9 +106,9 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 		Do(context.Background())
 
 	if err != nil {
-		log.Printf("error: %s", err)
+		log.Printf("ES写入错误 %s", err)
 	} else {
-		log.Printf("insert success!")
+		log.Printf("ES写入成功!")
 	}
 	return
 }
