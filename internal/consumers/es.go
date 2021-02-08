@@ -113,8 +113,6 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 
 	if err != nil {
 		log.Printf("10003 ES写入错误 %s", err)
-	} else {
-		log.Printf("10004 ES写入成功!")
 	}
 	return
 }
