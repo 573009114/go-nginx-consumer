@@ -15,13 +15,13 @@ func KafkaConsumer(addr string, topic string, ES string) (err error) {
 	c, err := sarama.NewConsumer(strings.Split(addr, ","), nil)
 
 	if err != nil {
-		logs.Error("Failed to start consumer ", err)
+		logs.Error("无法创建消费者", err)
 		return
 	}
 	// 拿到 对应主题下所有分区
 	partitionList, err := c.Partitions(topic)
 	if err != nil {
-		logs.Error("Failed to get partition list", err)
+		logs.Error("设置分区错误", err)
 		return
 	}
 
@@ -34,7 +34,7 @@ func KafkaConsumer(addr string, topic string, ES string) (err error) {
 		//消费者 消费 对应主题的 具体 分区 指定 主题 分区 offset  return 对应分区的对象
 		p, err := c.ConsumePartition(topic, int32(partition), sarama.OffsetNewest)
 		if err != nil {
-			logs.Error("Failed to consumerPartition %d：%s", p, err)
+			logs.Error("循环获取消费分区错误 %d：%s", p, err)
 			continue
 		}
 		//进入协程
