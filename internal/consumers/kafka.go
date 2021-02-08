@@ -1,6 +1,7 @@
 package consumers
 
 import (
+	"fmt"
 	"log"
 	"strings"
 	"sync"
@@ -37,6 +38,7 @@ func KafkaConsumer(addr string, topic string, ES string) (err error) {
 			logs.Error("循环获取消费分区错误 %d：%s", p, err)
 			continue
 		}
+
 		//进入协程
 		wg.Add(1)
 		go func(sarama.PartitionConsumer) {
@@ -44,12 +46,12 @@ func KafkaConsumer(addr string, topic string, ES string) (err error) {
 			defer wg.Done()
 			for msg := range p.Messages() {
 				data := msg.Value
-				// fmt.Println(data)
+				fmt.Println(data)
 				//写入es
 				err := Elastichandle(ES, topic, data)
 				if err != nil {
 					log.Printf("%s", err)
-					continue
+					return
 				}
 			}
 			//停止获取kafka信息
