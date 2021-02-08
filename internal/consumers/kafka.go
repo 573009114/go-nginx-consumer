@@ -36,32 +36,26 @@ func KafkaConsumer(addr string, topic string, ES string) (err error) {
 		p, err := c.ConsumePartition(topic, int32(partition), sarama.OffsetNewest)
 		if err != nil {
 			logs.Error("循环获取消费分区错误 %d：%s", p, err)
-			continue
 		}
-
+		defer p.AsyncClose()
 		//进入协程
+
 		wg.Add(1)
 		go func(sarama.PartitionConsumer) {
-			//退出协程
-			defer wg.Done()
 			for msg := range p.Messages() {
 				data := msg.Value
-				fmt.Println(data)
+				fmt.Println(string(data))
 				//写入es
 				err := Elastichandle(ES, topic, data)
 				if err != nil {
 					log.Printf("%s", err)
-					return
+					continue
 				}
 			}
-			//停止获取kafka信息
-			p.AsyncClose()
+			wg.Done()
 		}(p)
-		//协程等待
 		wg.Wait()
-		//关闭kafka连接
-		c.Close()
 	}
-
+	c.Close()
 	return nil
 }
