@@ -21,22 +21,30 @@ type NgxMessage struct {
 	} `json:"@metadata"`
 	Message string `json:"message"`
 	Msg     struct {
-		RemoteAddr           string `json:"remote_addr,omitempty"`
-		RemoteUser           string `json:"remote_user,omitempty"`
-		Timestamp            string `json:"timestamp,omitempty"`
-		Request              string `json:"request,omitempty"`
-		Status               string `json:"status,omitempty"`
-		BodyBytesSent        string `json:"body_bytes_sent,omitempty"`
-		HTTPReferer          string `json:"http_referer,omitempty"`
-		HTTPUserAgent        string `json:"http_user_agent,omitempty"`
-		HTTPXForwardedFor    string `json:"http_x_forwarded_for,omitempty"`
-		RequestTime          string `json:"request_time,omitempty"`
-		RemoteHost           string `json:"remote_host,omitempty"`
-		UpstreamResponseTime string `json:"upstream_response_time,omitempty"`
-		UpstreamAddr         string `json:"upstream_addr,omitempty"`
-		URI                  string `json:"uri,omitempty"`
-		XKSCACCOUNTID        string `json:"X-KSC-ACCOUNT-ID,omitempty"`
-		XKSCREQUESTID        string `json:"X-KSC-REQUEST-ID,omitempty"`
+		RemoteAddr           string      `json:"remote_addr,omitempty"`
+		RemoteUser           string      `json:"remote_user,omitempty"`
+		Timestamp            string      `json:"timestamp,omitempty"`
+		Request              string      `json:"request,omitempty"`
+		Status               string      `json:"status,omitempty"`
+		BodyBytesSent        string      `json:"body_bytes_sent,omitempty"`
+		HTTPReferer          string      `json:"http_referer,omitempty"`
+		HTTPUserAgent        string      `json:"http_user_agent,omitempty"`
+		HTTPXForwardedFor    string      `json:"http_x_forwarded_for,omitempty"`
+		RequestTime          string      `json:"request_time,omitempty"`
+		RemoteHost           string      `json:"remote_host,omitempty"`
+		UpstreamResponseTime string      `json:"upstream_response_time,omitempty"`
+		UpstreamAddr         string      `json:"upstream_addr,omitempty"`
+		URI                  string      `json:"uri,omitempty"`
+		XKSCACCOUNTID        string      `json:"X-KSC-ACCOUNT-ID,omitempty"`
+		XKSCREQUESTID        string      `json:"X-KSC-REQUEST-ID,omitempty"`
+		Level                string      `json:"level,omitempty"`
+		Ts                   string      `json:"ts,omitempty"`
+		Caller               string      `json:"caller,omitempty"`
+		Msg                  string      `json:"msg,omitempty"`
+		DoraemonEnv          string      `json:"doraemon-env,omitempty"`
+		ServiceName          string      `json:"serviceName,omitempty"`
+		Req                  string      `json:"req,omitempty"`
+		Err                  interface{} `json:"err,omitempty"`
 	} `json:"msg"`
 	Source     string `json:"source"`
 	Offset     int    `json:"offset"`
@@ -73,7 +81,7 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 	//序列化kafka接收的数据
 	err = json.Unmarshal(data, &msg)
 	if err != nil {
-		log.Print("10001 非标准格式，无法序列化 ")
+		log.Print("10001 非标准格式，无法序列化")
 		return
 	}
 
@@ -83,7 +91,7 @@ func Elastichandle(addr string, topic string, data []byte) (err error) {
 	err = json.Unmarshal([]byte(msg.Message), &msg.Msg)
 
 	if err != nil {
-		log.Print("10002 非标准格式，无法序列化 ")
+		log.Print("10002 非标准格式，无法序列化，按照原始格式写入")
 	}
 
 	//获取日志文件名
