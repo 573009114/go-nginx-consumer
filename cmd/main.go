@@ -49,7 +49,5 @@ func main() {
 		log.Fatal("consumers error", err)
 	}
 
-	// a := "[2021/02/07 17:51:54 [error] 11305#0: *600029462 connect() failed (111: Connectionrefused) while connecting to upstream  client: 36.112.24.11  server: test-guardians.ksyun.com  request: \"GET / HTTP/1.1\"  upstream:\"http://172.16.16.25:30008/\"  host: \"test-guardians.ksyun.com\"]"
-	// fmt.Println(strings.Split(" ", a))
 
 }
